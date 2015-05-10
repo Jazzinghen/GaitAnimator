@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Engine", "Engine", "{A5396712-3AA2-482C-A873-6B4C4A5E4D86}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Games", "Games", "{1B5022AE-E5AA-4F1B-95DD-D29832A146E4}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GaitAnimator", "Intermediate\ProjectFiles\GaitAnimator.vcxproj", "{E5A0B3E8-D0B0-4127-8C13-8F50182F4885}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UE4", "Intermediate\ProjectFiles\UE4.vcxproj", "{729B864E-82B1-4F5D-B06F-883651B943D3}"
 EndProject
@@ -30,12 +30,17 @@ Global
 		{E5A0B3E8-D0B0-4127-8C13-8F50182F4885}.Development|Windows.Build.0 = Development_Game|x64
 		{E5A0B3E8-D0B0-4127-8C13-8F50182F4885}.Shipping|Windows.ActiveCfg = Shipping_Game|Win32
 		{E5A0B3E8-D0B0-4127-8C13-8F50182F4885}.Shipping|Windows.Build.0 = Shipping_Game|Win32
+		{729B864E-82B1-4F5D-B06F-883651B943D3}.DebugGame Editor|Windows.ActiveCfg = BuiltWithUnrealBuildTool|Win32
+		{729B864E-82B1-4F5D-B06F-883651B943D3}.DebugGame|Windows.ActiveCfg = BuiltWithUnrealBuildTool|Win32
+		{729B864E-82B1-4F5D-B06F-883651B943D3}.Development Editor|Windows.ActiveCfg = BuiltWithUnrealBuildTool|Win32
+		{729B864E-82B1-4F5D-B06F-883651B943D3}.Development|Windows.ActiveCfg = BuiltWithUnrealBuildTool|Win32
+		{729B864E-82B1-4F5D-B06F-883651B943D3}.Shipping|Windows.ActiveCfg = BuiltWithUnrealBuildTool|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{729B864E-82B1-4F5D-B06F-883651B943D3} = {A5396712-3AA2-482C-A873-6B4C4A5E4D86}
 		{E5A0B3E8-D0B0-4127-8C13-8F50182F4885} = {1B5022AE-E5AA-4F1B-95DD-D29832A146E4}
+		{729B864E-82B1-4F5D-B06F-883651B943D3} = {A5396712-3AA2-482C-A873-6B4C4A5E4D86}
 	EndGlobalSection
 EndGlobal
