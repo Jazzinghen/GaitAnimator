@@ -20,6 +20,10 @@ AGaitDoll2::AGaitDoll2(const FObjectInitializer& ObjectInitializer)
 
 	GaitSkeleton = ObjectInitializer.CreateDefaultSubobject<USkeletalMeshComponent>(this, TEXT("Gait Skeleton"));
 	RootComponent = GaitSkeleton;
+
+	LeftCalfRotation.Yaw = 0.0f;
+	LeftCalfRotation.Pitch = 0.0f;
+	LeftCalfRotation.Roll = 0.0f;
 }
 
 // Called when the game starts or when spawned
@@ -34,12 +38,5 @@ void AGaitDoll2::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
 
+	LeftCalfRotation.Roll += DeltaTime * (90.0f / 5.0f);
 }
-
-// Called to bind functionality to input
-void AGaitDoll2::SetupPlayerInputComponent(class UInputComponent* InputComponent)
-{
-	Super::SetupPlayerInputComponent(InputComponent);
-
-}
-
