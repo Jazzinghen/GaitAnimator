@@ -6,6 +6,7 @@ public class GaitAnimator : ModuleRules
 {
 	public GaitAnimator(TargetInfo Target)
 	{
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
+        // Adding sockets to implement basic network functionalities (i.e. activity data streaming)
+        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "Sockets", "Networking" });
 	}
 }
