@@ -23,20 +23,20 @@ protected:
 	 *  Code removed:
 	 *	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Network)
 	 */
-	static FSocket* ServerSocket;
 
 public:
 	
 	/** Network initialisation function, should be called only at start of the system */
-	UFUNCTION(BlueprintCallable, Category = Network, meta = (FriendlyName = "Network Initialisation"))
-	bool NetworkSetup(int ServerPort);
+	UFUNCTION(BlueprintCallable, Category = "JazzNetwork")
+	static bool NetworkSetup(int32 ServerPort);
 
 	/** Check for data available in network socket, use to know when to call the "getPacket" function */
-	UFUNCTION(BlueprintCallable, Category = Network, meta = (FriendlyName = "Check for new data in socket buffer"))
-	bool NewDataAvailable();
+	UFUNCTION(BlueprintCallable, Category = "JazzNetwork")
+	static bool NewDataAvailable();
 
 	/** Get rotations from the network socket */
-	UFUNCTION(BlueprintCallable, Category = Network, meta = (FriendlyName = "Check for new data in socket buffer"))
-	bool GetRotationPacket(TArray<FRotator> &newData);
+	UFUNCTION(BlueprintCallable, Category = "JazzNetwork")
+	static bool GetRotationPacket(TArray<FRotator> &newData);
 
+	static FSocket* ServerSocket;
 };

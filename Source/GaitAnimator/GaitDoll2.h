@@ -4,6 +4,7 @@
 
 #include "GameFramework/Actor.h"
 #include "GaitDollSkeleton.h"
+#include "NetworkBlueprintLibrary.h"
 #include "GaitDoll2.generated.h"
 
 UCLASS()
@@ -16,6 +17,9 @@ class GAITANIMATOR_API AGaitDoll2 : public AActor
 
 	UPROPERTY(Category = GaitDoll, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	FRotator LeftCalfRotation;
+
+	UPROPERTY(Category = GaitDoll, VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UNetworkBlueprintLibrary* NetworkManager;
 
 public:
 	// Sets default values for this pawn's properties

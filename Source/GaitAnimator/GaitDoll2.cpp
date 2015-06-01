@@ -2,6 +2,7 @@
 
 #include "GaitAnimator.h"
 #include "GaitDoll2.h"
+#include "NetworkBlueprintLibrary.h"
 
 
 // Sets default values

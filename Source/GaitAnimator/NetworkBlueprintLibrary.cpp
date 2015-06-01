@@ -4,15 +4,18 @@
 #include "NetworkBlueprintLibrary.h"
 #include "Runtime/Networking/Public/Networking.h"
 
-bool UNetworkBlueprintLibrary::NetworkSetup(int ServerPort) {
+FSocket* UNetworkBlueprintLibrary::ServerSocket;
+
+bool UNetworkBlueprintLibrary::NetworkSetup(int32 ServerPort) {
 
 	FSocket* Socket = nullptr;
 	bool res = false;
+	uint16 castServerPort = (uint16)ServerPort;
 
 	// Instead of using the step-by-step approach I will use the FTcpSocketBuilder Function :D
 	FTcpSocketBuilder SocketBuilder = FTcpSocketBuilder(TEXT("Server Socket")); 
 	FIPv4Address ServerAddress = FIPv4Address(127, 0, 0, 1);
-	FIPv4Endpoint ServerEndpoint = FIPv4Endpoint(ServerAddress, (uint16)ServerPort);
+	FIPv4Endpoint ServerEndpoint = FIPv4Endpoint(ServerAddress, castServerPort);
 
 	SocketBuilder.AsNonBlocking();
 	SocketBuilder.BoundToEndpoint(ServerEndpoint);
@@ -20,7 +23,7 @@ bool UNetworkBlueprintLibrary::NetworkSetup(int ServerPort) {
 	Socket = SocketBuilder.Build();
 
 	if (Socket != NULL){
-		ServerSocket = Socket;
+		UNetworkBlueprintLibrary::ServerSocket = Socket;
 		res = true;
 	}
 	else {
@@ -34,7 +37,7 @@ bool UNetworkBlueprintLibrary::NewDataAvailable(){
 
 	uint32 NetData;
 
-	return ServerSocket->HasPendingData(NetData);
+	return UNetworkBlueprintLibrary::ServerSocket->HasPendingData(NetData);
 }
 
 bool UNetworkBlueprintLibrary::GetRotationPacket(TArray<FRotator> &newData){
@@ -42,7 +45,7 @@ bool UNetworkBlueprintLibrary::GetRotationPacket(TArray<FRotator> &newData){
 	bool bDataPresent;
 	uint32 NetData;
 	
-	bDataPresent = ServerSocket->HasPendingData(NetData);
+	bDataPresent = UNetworkBlueprintLibrary::ServerSocket->HasPendingData(NetData);
 
 	if (bDataPresent){
 		return true;
