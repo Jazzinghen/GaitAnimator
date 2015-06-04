@@ -38,5 +38,18 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "JazzNetwork")
 	static bool GetRotationPacket(TArray<FRotator> &newData);
 
+	/** Close socket */
+	UFUNCTION(BlueprintCallable, Category = "JazzNetwork")
+    static void StopCommunications();
+
+	/** New connection requests? */
+	UFUNCTION(BlueprintCallable, Category = "JazzNetwork")
+	static bool NewConnectionRequests();
+
+	/** Accept new connections */
+	UFUNCTION(BlueprintCallable, Category = "JazzNetwork")
+	static bool AcceptConnections();
+
 	static FSocket* ServerSocket;
+	static FSocket* ClientSocket;
 };
