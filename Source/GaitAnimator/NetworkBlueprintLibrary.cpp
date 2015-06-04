@@ -10,7 +10,8 @@ bool UNetworkBlueprintLibrary::NetworkSetup(int32 ServerPort) {
 
 	bool res = false;
 
-
+	//FTcpSocketBuilder blah;
+	//blah.Build()
 	// Creating a Socket pointer, wich will temporary contain our 
 	FSocket* Socket = nullptr;
 	ISocketSubsystem* SocketSubsystem = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM);
@@ -33,7 +34,7 @@ bool UNetworkBlueprintLibrary::NetworkSetup(int32 ServerPort) {
 
 			if (SocketCreationError)
 			{
-				GLog->Logf(TEXT("Failed to create %s as configured!"), Socket->GetDescription());
+				GLog->Logf(TEXT("Failed to create Server Socket as configured!"));
 
 				SocketSubsystem->DestroySocket(Socket);
 
