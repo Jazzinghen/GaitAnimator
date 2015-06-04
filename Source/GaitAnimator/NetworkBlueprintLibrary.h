@@ -14,7 +14,7 @@ class GAITANIMATOR_API UNetworkBlueprintLibrary : public UBlueprintFunctionLibra
 {
 	GENERATED_BODY()
 
-protected:
+public:
 
 	/** The server socket. As I understood since FSocket is not a USTRUCT then it cannot make use of
 	 *  the UPROPERTY macro. Actually it would be more "It does not require UPROPERTY", as I suppose,
@@ -24,9 +24,9 @@ protected:
 	 *	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Network)
 	 */
 
-public:
-	
-	/** Network initialisation function, should be called only at start of the system */
+	static FSocket* ServerSocket;
+
+	/** Network initialisation function, should be called at start of the system. */
 	UFUNCTION(BlueprintCallable, Category = "JazzNetwork")
 	static bool NetworkSetup(int32 ServerPort);
 
@@ -38,18 +38,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "JazzNetwork")
 	static bool GetRotationPacket(TArray<FRotator> &newData);
 
-	/** Close socket */
+	/** Close socket. Most probably you want to call this when the doll is doing to be destroyed. */
 	UFUNCTION(BlueprintCallable, Category = "JazzNetwork")
     static void StopCommunications();
 
-	/** New connection requests? */
-	UFUNCTION(BlueprintCallable, Category = "JazzNetwork")
-	static bool NewConnectionRequests();
-
-	/** Accept new connections */
-	UFUNCTION(BlueprintCallable, Category = "JazzNetwork")
-	static bool AcceptConnections();
-
-	static FSocket* ServerSocket;
-	static FSocket* ClientSocket;
 };

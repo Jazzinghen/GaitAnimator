@@ -5,35 +5,35 @@
 #include "Runtime/Networking/Public/Networking.h"
 
 FSocket* UNetworkBlueprintLibrary::ServerSocket;
-FSocket* UNetworkBlueprintLibrary::ClientSocket;
 
 bool UNetworkBlueprintLibrary::NetworkSetup(int32 ServerPort) {
 
-	FSocket* Socket = nullptr;
 	bool res = false;
-	uint16 castServerPort = (uint16)ServerPort;
-	
-	//int32 dataQty;
+
+
+	// Creating a Socket pointer, wich will temporary contain our 
+	FSocket* Socket = nullptr;
 	ISocketSubsystem* SocketSubsystem = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM);
 	
 	// Instead of that useless FTcpSocketBuilder I will try to create the socket by hand and then debug it... >:(
-	if (SocketSubsystem != nullptr)
-	{
-		FIPv4Address ServerAddress = FIPv4Address(127, 0, 0, 1);
-
-		TSharedRef<FInternetAddr> LocalAddress = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateInternetAddr();
-		LocalAddress->SetIp(ServerAddress.GetValue());
-		LocalAddress->SetPort(castServerPort);
-
+	if (SocketSubsystem != nullptr) {
+		// Try to create a stream socket using the system-intependent interface
 		Socket = SocketSubsystem->CreateSocket(NAME_Stream, TEXT("Server Socket"), false);
 
-		if (Socket != nullptr)
-		{
+		if (Socket != nullptr) {
+			FIPv4Address ServerAddress = FIPv4Address(127, 0, 0, 1);
+			TSharedRef<FInternetAddr> LocalAddress = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateInternetAddr();
+			uint16 castServerPort = (uint16)ServerPort;
+
+			// Attach received port and IPAddress to Internet Address pointer
+			LocalAddress->SetIp(ServerAddress.GetValue());
+			LocalAddress->SetPort(castServerPort);
+			
 			bool SocketCreationError = !Socket->Connect(*LocalAddress);
 
 			if (SocketCreationError)
 			{
-				GLog->Logf(TEXT("Failed to create the Server Socket as configured!"));
+				GLog->Logf(TEXT("Failed to create %s as configured!"), Socket->GetDescription());
 
 				SocketSubsystem->DestroySocket(Socket);
 
@@ -42,51 +42,10 @@ bool UNetworkBlueprintLibrary::NetworkSetup(int32 ServerPort) {
 		}
 	}
 
-	// Instead of using the step-by-step approach I will use the FTcpSocketBuilder Function :D
-	//FTcpSocketBuilder SocketBuilder = FTcpSocketBuilder(TEXT("Server Socket")); 
-	//FIPv4Address ServerAddress = FIPv4Address(127, 0, 0, 1);
-	//FIPv4Endpoint ServerEndpoint = FIPv4Endpoint(ServerAddress, castServerPort);
 
-	//SocketBuilder.AsNonBlocking();
-	//SocketBuilder.BoundToEndpoint(ServerEndpoint);
-	//SocketBuilder.AsReusable();
-	//SocketBuilder.Listening(100);
-
-	//Socket = SocketBuilder.AsNonBlocking().AsReusable().Listening(100).Build();
 
 	if (Socket != nullptr){
-		/*FString message = FString(TEXT("Hello Bitches!"));
-		TCHAR *sendData = message.GetCharArray().GetData();
-		int32 size = FCString::Strlen(sendData);
-
 		UNetworkBlueprintLibrary::ServerSocket = Socket;
-		UNetworkBlueprintLibrary::ServerSocket->Send((uint8*)TCHAR_TO_UTF8(sendData), size, dataQty);*/
-		UNetworkBlueprintLibrary::ServerSocket = Socket;
-		res = true;
-	}
-	else {
-		res = false;
-	}
-
-	return res;
-}
-
-bool UNetworkBlueprintLibrary::NewConnectionRequests(){
-	bool bPendingConnection;
-
-	UNetworkBlueprintLibrary::ServerSocket->HasPendingConnection(bPendingConnection);
-
-	return bPendingConnection;
-}
-
-
-bool UNetworkBlueprintLibrary::AcceptConnections(){
-	bool res;
-	FString connectionResponse;
-
-	UNetworkBlueprintLibrary::ClientSocket =  UNetworkBlueprintLibrary::ServerSocket->Accept(connectionResponse);
-
-	if (UNetworkBlueprintLibrary::ClientSocket != NULL){
 		res = true;
 	}
 	else {
