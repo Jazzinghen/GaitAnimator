@@ -37,7 +37,7 @@ bool UNetworkBlueprintLibrary::NetworkSetup(int32 ServerPort) {
 				GLog->Logf(TEXT("Failed to create Server Socket as configured!"));
 
 				SocketSubsystem->DestroySocket(Socket);
-
+					
 				Socket = nullptr;
 			}
 		}
@@ -63,22 +63,30 @@ bool UNetworkBlueprintLibrary::NewDataAvailable(){
 	return UNetworkBlueprintLibrary::ServerSocket->HasPendingData(NetData);
 }
 
-bool UNetworkBlueprintLibrary::GetRotationPacket(TArray<FRotator> &newData){
+TArray<FRotator> UNetworkBlueprintLibrary::GetRotationPacket(){
 
-	bool bDataPresent;
-	bool res;
-	uint32 NetData;
-	
-	bDataPresent = UNetworkBlueprintLibrary::ServerSocket->HasPendingData(NetData);
+	bool				bDataPresent;
+	bool				res;
+	uint32				netData;
+	TArray<FRotator>	tempData;
+	TArray<char>		receivedData;
+
+	bDataPresent = UNetworkBlueprintLibrary::ServerSocket->HasPendingData(netData);
+
+	if (netData >= 9) {
+		UNetworkBlueprintLibrary::ServerSocket->Recv();
+	}
 
 	if (bDataPresent){
+		
+
 		res = true;
 	}
 	else {
 		res = false;
 	}
 
-	return res;
+	return tempData;
 }
 
 void UNetworkBlueprintLibrary::StopCommunications(){

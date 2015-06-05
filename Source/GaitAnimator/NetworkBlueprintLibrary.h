@@ -36,7 +36,7 @@ public:
 
 	/** Get rotations from the network socket */
 	UFUNCTION(BlueprintCallable, Category = "JazzNetwork")
-	static bool GetRotationPacket(TArray<FRotator> &newData);
+	static TArray<FRotator> GetRotationPacket();
 
 	/** Close socket. Most probably you want to call this when the doll is doing to be destroyed. */
 	UFUNCTION(BlueprintCallable, Category = "JazzNetwork")
