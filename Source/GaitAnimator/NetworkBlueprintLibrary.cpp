@@ -4,6 +4,9 @@
 #include "NetworkBlueprintLibrary.h"
 #include "Runtime/Networking/Public/Networking.h"
 
+//Logging for your AI system
+DEFINE_LOG_CATEGORY(NetworkInfo);
+
 FSocket* UNetworkBlueprintLibrary::ServerSocket;
 
 bool UNetworkBlueprintLibrary::NetworkSetup(int32 ServerPort) {
@@ -66,25 +69,21 @@ bool UNetworkBlueprintLibrary::NewDataAvailable(){
 TArray<FRotator> UNetworkBlueprintLibrary::GetRotationPacket(){
 
 	bool				bDataPresent;
-	bool				res;
 	uint32				netData;
+	int32				bytesRead;
 	TArray<FRotator>	tempData;
-	TArray<char>		receivedData;
+	uint8				receivedData[100];
 
 	bDataPresent = UNetworkBlueprintLibrary::ServerSocket->HasPendingData(netData);
 
-	if (netData >= 9) {
-		UNetworkBlueprintLibrary::ServerSocket->Recv();
-	}
-
-	if (bDataPresent){
+	if (netData >= 16) {
+		UNetworkBlueprintLibrary::ServerSocket->Recv(receivedData, (int32) 100, bytesRead);
 		
-
-		res = true;
-	}
-	else {
-		res = false;
-	}
+		FString debugData = BytesToString(receivedData, bytesRead);
+		// Writing received message on LOG
+		UE_LOG(NetworkInfo, Warning, TEXT("Got message %s"), *debugData);
+		
+	} 
 
 	return tempData;
 }

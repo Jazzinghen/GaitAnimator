@@ -6,6 +6,9 @@
 #include "Runtime/Networking/Public/Networking.h"
 #include "NetworkBlueprintLibrary.generated.h"
 
+//Logging for your AI system
+DECLARE_LOG_CATEGORY_EXTERN(NetworkInfo, Log, All);
+
 /**
  * 
  */
