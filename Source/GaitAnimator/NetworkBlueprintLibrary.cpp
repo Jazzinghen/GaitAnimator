@@ -3,6 +3,7 @@
 #include "GaitAnimator.h"
 #include "NetworkBlueprintLibrary.h"
 #include "Runtime/Networking/Public/Networking.h"
+#include "Runtime/Json/Public/Json.h"
 
 //Logging for your AI system
 DEFINE_LOG_CATEGORY(NetworkInfo);
@@ -72,20 +73,30 @@ TArray<FRotator> UNetworkBlueprintLibrary::GetRotationPacket(){
 	uint32				netData;
 	int32				bytesRead;
 	TArray<FRotator>	tempData;
-	//uint8				receivedData[100];
-	// Modification to the code in order to use dynamic arrays istead of static ones.
 	TArray<uint8>		receivedData;
 
 	bDataPresent = UNetworkBlueprintLibrary::ServerSocket->HasPendingData(netData);
 	receivedData.Empty(netData + 1);
 
-	if (netData >= 16) {
-		UNetworkBlueprintLibrary::ServerSocket->Recv(receivedData.GetData(), netData, bytesRead);
-		
-		FString debugData = BytesToString(receivedData.GetData(), bytesRead);
-		// Writing received message on LOG
-		UE_LOG(NetworkInfo, Warning, TEXT("Got message %s"), *debugData);
-		
+	// If we received enough data (16 is a placeholder for now)
+	if (netData >= 6) {
+		// Get data from socket buffer
+		bDataPresent = UNetworkBlueprintLibrary::ServerSocket->Recv(receivedData.GetData(), netData, bytesRead);
+		if (bDataPresent) {
+			// Convert bytes into a string
+			FString receivedString = ANSI_TO_TCHAR((char*)receivedData.GetData());
+			// Cut all the useless stuff (some... dirty memory, maybe generated while doing the -1...)
+			receivedString = receivedString.Left(bytesRead);
+			// Writing received message on LOG
+			UE_LOG(NetworkInfo, Warning, TEXT("Got message %s"), *receivedString);
+
+			TSharedPtr<FJsonObject> JsonObject;
+			TSharedRef<TJsonReader<>> receivedJson = TJsonReaderFactory<>::Create(receivedString);
+
+			if (FJsonSerializer::Deserialize<TCHAR>(receivedJson, JsonObject)) {
+
+			}
+		}
 	} 
 
 	return tempData;
