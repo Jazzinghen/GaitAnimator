@@ -72,14 +72,17 @@ TArray<FRotator> UNetworkBlueprintLibrary::GetRotationPacket(){
 	uint32				netData;
 	int32				bytesRead;
 	TArray<FRotator>	tempData;
-	uint8				receivedData[100];
+	//uint8				receivedData[100];
+	// Modification to the code in order to use dynamic arrays istead of static ones.
+	TArray<uint8>		receivedData;
 
 	bDataPresent = UNetworkBlueprintLibrary::ServerSocket->HasPendingData(netData);
+	receivedData.Empty(netData + 1);
 
 	if (netData >= 16) {
-		UNetworkBlueprintLibrary::ServerSocket->Recv(receivedData, (int32) 100, bytesRead);
+		UNetworkBlueprintLibrary::ServerSocket->Recv(receivedData.GetData(), netData, bytesRead);
 		
-		FString debugData = BytesToString(receivedData, bytesRead);
+		FString debugData = BytesToString(receivedData.GetData(), bytesRead);
 		// Writing received message on LOG
 		UE_LOG(NetworkInfo, Warning, TEXT("Got message %s"), *debugData);
 		
