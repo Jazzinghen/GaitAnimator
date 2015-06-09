@@ -91,10 +91,34 @@ TArray<FRotator> UNetworkBlueprintLibrary::GetRotationPacket(){
 			UE_LOG(NetworkInfo, Warning, TEXT("Got message %s"), *receivedString);
 
 			TSharedPtr<FJsonObject> JsonObject;
+			// Create a JSON reader based on our received string
 			TSharedRef<TJsonReader<>> receivedJson = TJsonReaderFactory<>::Create(receivedString);
 
+			// Convert the entire string in a JSON object for further exploration
 			if (FJsonSerializer::Deserialize<TCHAR>(receivedJson, JsonObject)) {
+				// Temporary JSON object containing single bone rotator
+				const TSharedPtr<FJsonObject> *boneRotationObject;
 
+				// Try to extract the left_calf rotator
+				if (JsonObject->TryGetObjectField(TEXT("left_calf"), boneRotationObject)) {
+					FRotator boneRotator;
+					double tempAngle;
+
+					if (boneRotationObject->Get()->TryGetNumberField(TEXT("pitch"), tempAngle)) {
+						boneRotator.Pitch = tempAngle;
+					}
+
+					if (boneRotationObject->Get()->TryGetNumberField(TEXT("yaw"), tempAngle)) {
+						boneRotator.Yaw = tempAngle;
+					}
+
+					if (boneRotationObject->Get()->TryGetNumberField(TEXT("roll"), tempAngle)) {
+						boneRotator.Roll = tempAngle;
+					}
+
+					UE_LOG(NetworkInfo, Warning, TEXT("Got angle: [%f; %f; %f]"), boneRotator.Pitch, boneRotator.Yaw, boneRotator.Roll);
+					tempData.Add(boneRotator);
+				}
 			}
 		}
 	} 
