@@ -72,7 +72,7 @@ TArray<FRotator> UNetworkBlueprintLibrary::GetRotationPacket(){
 	bool				bDataPresent;
 	uint32				netData;
 	int32				bytesRead;
-	TArray<FRotator>	tempData;
+	TArray<FRotator>	tempRotators;
 	TArray<uint8>		receivedData;
 
 	bDataPresent = UNetworkBlueprintLibrary::ServerSocket->HasPendingData(netData);
@@ -94,38 +94,55 @@ TArray<FRotator> UNetworkBlueprintLibrary::GetRotationPacket(){
 			// Create a JSON reader based on our received string
 			TSharedRef<TJsonReader<>> receivedJson = TJsonReaderFactory<>::Create(receivedString);
 
-			// Convert the entire string in a JSON object for further exploration
+			// Get everything from the JSON structure
+			// This... This... THIS IS SO MESSY BUT I DON'T KNOW HOW TO MAKE IT CLEANER! ;3;
 			if (FJsonSerializer::Deserialize<TCHAR>(receivedJson, JsonObject)) {
-				// Temporary JSON object containing single bone rotator
-				const TSharedPtr<FJsonObject> *boneRotationObject;
-
-				// Try to extract the left_calf rotator
-				if (JsonObject->TryGetObjectField(TEXT("left_calf"), boneRotationObject)) {
-					FRotator boneRotator;
-					double tempAngle;
-
-					if (boneRotationObject->Get()->TryGetNumberField(TEXT("pitch"), tempAngle)) {
-						boneRotator.Pitch = tempAngle;
-					}
-
-					if (boneRotationObject->Get()->TryGetNumberField(TEXT("yaw"), tempAngle)) {
-						boneRotator.Yaw = tempAngle;
-					}
-
-					if (boneRotationObject->Get()->TryGetNumberField(TEXT("roll"), tempAngle)) {
-						boneRotator.Roll = tempAngle;
-					}
-
-					UE_LOG(NetworkInfo, Warning, TEXT("Got angle: [%f; %f; %f]"), boneRotator.Pitch, boneRotator.Yaw, boneRotator.Roll);
-					tempData.Add(boneRotator);
-				}
+				tempRotators.Add(UNetworkBlueprintLibrary::getSpecificRotator(JsonObject, TEXT("left_calf")));
+				tempRotators.Add(UNetworkBlueprintLibrary::getSpecificRotator(JsonObject, TEXT("left_thigh")));
+				tempRotators.Add(UNetworkBlueprintLibrary::getSpecificRotator(JsonObject, TEXT("right_calf")));
+				tempRotators.Add(UNetworkBlueprintLibrary::getSpecificRotator(JsonObject, TEXT("right_thigh")));
+				tempRotators.Add(UNetworkBlueprintLibrary::getSpecificRotator(JsonObject, TEXT("spine_01")));
+				tempRotators.Add(UNetworkBlueprintLibrary::getSpecificRotator(JsonObject, TEXT("spine_03")));
+				tempRotators.Add(UNetworkBlueprintLibrary::getSpecificRotator(JsonObject, TEXT("pelvis")));
+				tempRotators.Add(UNetworkBlueprintLibrary::getSpecificRotator(JsonObject, TEXT("left_clavicle")));
+				tempRotators.Add(UNetworkBlueprintLibrary::getSpecificRotator(JsonObject, TEXT("left_upper_arm")));
+				tempRotators.Add(UNetworkBlueprintLibrary::getSpecificRotator(JsonObject, TEXT("left_lower_arm")));
+				tempRotators.Add(UNetworkBlueprintLibrary::getSpecificRotator(JsonObject, TEXT("right_clavicle")));
+				tempRotators.Add(UNetworkBlueprintLibrary::getSpecificRotator(JsonObject, TEXT("right_upper_arm")));
+				tempRotators.Add(UNetworkBlueprintLibrary::getSpecificRotator(JsonObject, TEXT("right_lower_arm")));
 			}
 		}
 	} 
 
-	return tempData;
+	return tempRotators;
 }
 
 void UNetworkBlueprintLibrary::StopCommunications(){
 	UNetworkBlueprintLibrary::ServerSocket->Close();
+}
+
+FRotator UNetworkBlueprintLibrary::getSpecificRotator(TSharedPtr<FJsonObject> JsonObject, const FString &boneName) {
+	FRotator boneRotator;
+	const TSharedPtr<FJsonObject> *boneRotationObject;
+
+	// Try to extract the left_calf rotator
+	if (JsonObject->TryGetObjectField(boneName, boneRotationObject)) {
+		double tempAngle;
+
+		if (boneRotationObject->Get()->TryGetNumberField(TEXT("pitch"), tempAngle)) {
+			boneRotator.Pitch = tempAngle;
+		}
+
+		if (boneRotationObject->Get()->TryGetNumberField(TEXT("yaw"), tempAngle)) {
+			boneRotator.Yaw = tempAngle;
+		}
+
+		if (boneRotationObject->Get()->TryGetNumberField(TEXT("roll"), tempAngle)) {
+			boneRotator.Roll = tempAngle;
+		}
+
+		UE_LOG(NetworkInfo, Warning, TEXT("Got %s angle: [%f; %f; %f]"), *boneName, boneRotator.Pitch, boneRotator.Yaw, boneRotator.Roll);
+	}
+
+	return boneRotator;
 }
